@@ -1,31 +1,73 @@
-# application-intelligence-ecommerce-genai-suite
+# E-Commerce GenAI Demo: Huawei Cloud Best Practice
 
-[![Status](https://img.shields.io/badge/Status-Incubating-blue)]()
-[![Huawei Cloud](https://img.shields.io/badge/Huawei%20Cloud-Samples-red)]()
-[![Scenario](https://img.shields.io/badge/Scenario-application%20intelligence-success)](https://3ms.huawei.com/docs/docinfo/1300901382590492672?bookstackId=866760814559879168&gid=3591759&l=zh-cn&documentkind=&attachmentIdx=5)
+![License](https://img.shields.io/badge/license-MIT--0-blue.svg)
+![Huawei Cloud](https://img.shields.io/badge/华为云-最佳实践-ff4d00.svg)
 
-This demo application includes four core AI use cases, covering the full-chain intelligent needs of e-commerce scenarios:
+> Huawei Cloud Best Practice (Architecture-equivalent adaptation)
+
+---
 
 ## Overview
 
-This repository is created from the huaweicloud-samples automated repository request workflow.
+Huawei Cloud Best Practice (Same-Shaped Architecture, Not Code Translation)
 
-## Getting Started
+### Core Features
 
-Add setup, deployment, and verification steps here.
+This demo application includes four core AI use cases, covering the full-chain intelligent needs of e-commerce scenarios:
 
-## Contributing
+1. **Product Design Image Generation** - Uses Huawei Cloud MaaS image generation capability (Qwen-Image) to automatically generate product design concept images based on text descriptions. This feature helps designers quickly generate creative prototypes, significantly shortening the product design cycle. The system supports Chinese and English input, and generated images can be directly used for product display or market research.
 
-Please use pull requests and follow the repository review rules.
+2. **Product Description Generation** - Based on Huawei Cloud MaaS language generation capability (DeepSeek-V4-Flash/GLM-5.2), automatically generates product copy that meets e-commerce platform specifications. This feature can intelligently generate attractive product descriptions based on product attributes, target audiences, and marketing scenarios, including titles, highlights, and specifications, greatly improving product listing efficiency.
+
+3. **Landing Page Generation** - Intelligently generates marketing landing page content, including hero section slogans, product advantage introductions, and call-to-action button copy. Combined with MaaS platform's content understanding and generation capabilities, this feature helps operations teams quickly create high-quality marketing pages and improve conversion rates.
+
+4. **Product Image Background Correction** - Uses image processing capability (Qwen-Image-Edit) to automatically identify product images and replace backgrounds, transforming casually taken product photos into professional product display images. This feature supports various scenarios including background blur, background replacement, and white background generation, significantly reducing post-processing costs for product images.
+
+### Use Cases
+
+This project is suitable for the following scenarios: e-commerce platform operators needing to batch-generate product content; product managers quickly validating product concept designs; marketing teams creating promotional materials; and developers learning architecture design for cloud-native AI applications.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Huawei Cloud Architecture                        │
+├─────────────────────────────────────────────────────────────────────┤
+│  CDN → ELB + CCE → Streamlit → MaaS API                          │
+│                                        │                           │
+│    OBS → Translation → CSS → IAM → KMS                            │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Services Used
+
+| Service | Purpose |
+|---------|---------|
+| MaaS (DeepSeek/Qwen/BGE) | LLM/Image/Embeddings |
+| CCE | Container Platform |
+| CDN | Content Delivery |
+| ELB | Load Balancer |
+| CSS | Vector Database |
+| OBS | Object Storage |
+| IAM | Identity |
+| KMS | Key Management |
+
+---
+
+## Quick Start
+
+```bash
+cd infra
+terraform init
+terraform apply
+```
+
+---
 
 ## License
 
-This project is licensed under the MIT-0 license.
-
-## Maintainers
-
-CODEOWNERS: @Ferguson2211
-
-## Feedback
-
-Please use GitHub Issues: https://github.com/huaweicloud-samples/application-intelligence-ecommerce-genai-suite/issues
+MIT-0 License

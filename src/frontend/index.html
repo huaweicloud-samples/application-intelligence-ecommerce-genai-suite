@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电商生成式 AI 演示 - 华为云 MaaS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #ff4d00;
+            --secondary-color: #1a1a1a;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .navbar {
+            background: rgba(0,0,0,0.8) !important;
+            backdrop-filter: blur(10px);
+        }
+        .hero-section {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(255,77,0,0.1) 0%, transparent 100%);
+        }
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #fff, var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 40px rgba(255,77,0,0.2);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .model-badge {
+            background: linear-gradient(90deg, #ff4d00, #ff6b3d);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .demo-section {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        .demo-input {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .demo-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255,77,0,0.2);
+        }
+        .btn-generate {
+            background: linear-gradient(90deg, #ff4d00, #ff6b3d);
+            border: none;
+            padding: 12px 40px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-generate:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255,77,0,0.4);
+        }
+        .result-box {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .cloud-info {
+            background: rgba(255,77,0,0.1);
+            border: 1px solid rgba(255,77,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #ff4d00;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        .tab-content {
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-cloud-fill text-warning"></i> 华为云 MaaS
+            </a>
+            <span class="badge bg-secondary">电商生成式 AI</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">
+                <i class="bi bi-robot"></i> 电商生成式 AI 演示
+            </h1>
+            <p class="lead text-secondary mb-4">
+                基于华为云 MaaS 平台 · DeepSeek-V4-Flash + Qwen-Image + BGE-M3
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <span class="model-badge">DeepSeek-V4-Flash</span>
+                <span class="model-badge">Qwen-Image</span>
+                <span class="model-badge">BGE-M3</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-palette"></i>
+                        </div>
+                        <h4>产品设计图生成</h4>
+                        <p class="text-secondary">利用 Qwen-Image 文生图能力，根据文字描述自动生成产品设计概念图</p>
+                        <span class="badge bg-success">Qwen-Image</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                        <h4>商品说明文生成</h4>
+                        <p class="text-secondary">基于 DeepSeek-V4-Flash 自动生成符合电商规范的商品卖点文案</p>
+                        <span class="badge bg-success">DeepSeek-V4</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <h4>LP落地页生成</h4>
+                        <p class="text-secondary">智能生成营销落地页内容，包含标语、优势介绍、行动号召</p>
+                        <span class="badge bg-success">DeepSeek-V4</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-image"></i>
+                        </div>
+                        <h4>商品图片背景修正</h4>
+                        <p class="text-secondary">利用 Qwen-Image-Edit 智能识别商品图片并替换背景</p>
+                        <span class="badge bg-success">Qwen-Image-Edit</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="demo-section">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-play-circle"></i> 实时演示
+                </h2>
+
+                <ul class="nav nav-pills mb-4 justify-content-center" id="demoTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="text-tab" data-bs-toggle="pill" data-bs-target="#text-demo" type="button">
+                            <i class="bi bi-chat-dots"></i> 文本生成
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="image-tab" data-bs-toggle="pill" data-bs-target="#image-demo" type="button">
+                            <i class="bi bi-image"></i> 图像生成
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="embed-tab" data-bs-toggle="pill" data-bs-target="#embed-demo" type="button">
+                            <i class="bi bi-search"></i> 向量搜索
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="demoTabContent">
+                    <!-- Text Generation -->
+                    <div class="tab-pane fade show active" id="text-demo" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">选择场景</label>
+                                <select class="form-select demo-input mb-3" id="textScenario">
+                                    <option value="description">商品描述生成</option>
+                                    <option value="social">社交媒体帖子</option>
+                                    <option value="landing">落地页文案</option>
+                                </select>
+
+                                <label class="form-label text-secondary">输入内容</label>
+                                <textarea class="form-control demo-input" id="textInput" rows="4" placeholder="例如：智能手表，健康监测、长续航、防水"></textarea>
+
+                                <button class="btn btn-generate mt-3" onclick="generateText()">
+                                    <span id="textBtnContent"><i class="bi bi-lightning-charge"></i> 生成内容</span>
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">生成结果</label>
+                                <div class="result-box" id="textResult">
+                                    <p class="text-secondary">生成的内容将显示在这里...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Generation -->
+                    <div class="tab-pane fade" id="image-demo" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">选择类型</label>
+                                <select class="form-select demo-input mb-3" id="imageType">
+                                    <option value="product">产品设计图</option>
+                                    <option value="lifestyle">生活场景图</option>
+                                    <option value="background">背景图</option>
+                                </select>
+
+                                <label class="form-label text-secondary">图像描述（英文更佳）</label>
+                                <textarea class="form-control demo-input" id="imagePrompt" rows="4" placeholder="例如：A modern smart watch on a clean white background, professional product photography, 4k"></textarea>
+
+                                <button class="btn btn-generate mt-3" onclick="generateImage()">
+                                    <span id="imageBtnContent"><i class="bi bi-lightning-charge"></i> 生成图像</span>
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">生成结果</label>
+                                <div class="image-placeholder" id="imageResult">
+                                    <div>
+                                        <i class="bi bi-image" style="font-size: 3rem;"></i>
+                                        <p class="mt-2">生成的图像将显示在这里</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vector Search -->
+                    <div class="tab-pane fade" id="embed-demo" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">商品数据库（已向量化的商品）</label>
+                                <div class="result-box mb-3" style="min-height: 150px;">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> 智能手表 - 健康监测</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> 无线耳机 - 降噪</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> 平板电脑 - 办公</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> 智能音箱 - 语音助手</li>
+                                        <li class="mb-2"><i class="bi bi-check-circle text-success"></i> 运动手环 - 计步</li>
+                                    </ul>
+                                </div>
+
+                                <label class="form-label text-secondary">搜索查询</label>
+                                <input type="text" class="form-control demo-input" id="searchQuery" placeholder="例如：适合运动的电子产品">
+
+                                <button class="btn btn-generate mt-3" onclick="searchProducts()">
+                                    <span id="searchBtnContent"><i class="bi bi-search"></i> 向量搜索</span>
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">搜索结果</label>
+                                <div class="result-box" id="searchResult">
+                                    <p class="text-secondary">相似商品搜索结果...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cloud Info -->
+    <section class="py-5">
+        <div class="container">
+            <div class="cloud-info">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4><i class="bi bi-cloud"></i> 已部署的华为云资源</h4>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="bi bi-check-circle text-success"></i> VPC: ec-genai-20260820-vpc</li>
+                            <li><i class="bi bi-check-circle text-success"></i> OBS: ec-genai-20260820-assets</li>
+                            <li><i class="bi bi-check-circle text-success"></i> KMS: ad0d60ee-eac6-4b20-afbc-8a829f6b5681</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <h3 class="text-warning mb-0">¥0</h3>
+                        <small class="text-secondary">本次验证费用</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-secondary">
+        <div class="container">
+            <p class="mb-0">
+                华为云 MaaS · 电商生成式 AI 演示
+                <br>
+                <small>基于 DeepSeek-V4-Flash | Qwen-Image | BGE-M3</small>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Text Generation Demo
+        async function generateText() {
+            const btn = document.getElementById('textBtnContent');
+            const result = document.getElementById('textResult');
+            const scenario = document.getElementById('textScenario').value;
+            const input = document.getElementById('textInput').value;
+
+            if (!input) {
+                alert('请输入内容');
+                return;
+            }
+
+            btn.innerHTML = '<span class="loading-spinner"></span> 生成中...';
+
+            // Simulate API call
+            await new Promise(r => setTimeout(r, 1500));
+
+            const templates = {
+                description: [
+                    '【智能手表】全新上市，健康监测、长续航、防水设计。采用先进传感器技术，实时监测心率、血氧、睡眠质量。超长续航7天，防水深度50米。支持多种运动模式，智能提醒功能，让生活更便捷。',
+                    '这款智能手表集时尚与科技于一身，配备1.4英寸高清触控屏，支持NFC支付、GPS定位、音乐控制等多种功能。轻量化设计，佩戴舒适，是您健康生活的理想伙伴。'
+                ],
+                social: [
+                    '🎉 新品上市 | 智能手表震撼发布\n\n✨ 健康监测 ✨ 长续航 ✨ 防水设计\n\n让科技赋能生活，从此刻开始\n\n#智能手表 #科技新品 #健康生活',
+                    '☀️ 今日种草 | 这款智能手表太香了！\n\n心率监测、睡眠追踪、NFC支付...\n功能强大，颜值在线\n\n🔗 了解更多\n\n#智能穿戴 #科技好物 #种草'
+                ],
+                landing: [
+                    '<h2>智能手表 - 重新定义健康生活</h2>\n<p>先进科技，触手可及</p>\n<h3>核心优势</h3>\n<ul>\n<li>🔬 专业健康监测</li>\n<li>⚡ 7天超长续航</li>\n<li>💧 50米防水</li>\n</ul>\n<button class="btn btn-primary">立即体验</button>'
+                ]
+            };
+
+            const randomIndex = Math.floor(Math.random() * templates[scenario].length);
+            result.innerHTML = `<p>${templates[scenario][randomIndex]}</p>`;
+            btn.innerHTML = '<i class="bi bi-lightning-charge"></i> 重新生成';
+        }
+
+        // Image Generation Demo
+        async function generateImage() {
+            const btn = document.getElementById('imageBtnContent');
+            const result = document.getElementById('imageResult');
+            const prompt = document.getElementById('imagePrompt').value;
+
+            if (!prompt) {
+                alert('请输入图像描述');
+                return;
+            }
+
+            btn.innerHTML = '<span class="loading-spinner"></span> 生成中...';
+
+            // Simulate API call
+            await new Promise(r => setTimeout(r, 2000));
+
+            result.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 100%; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                        <i class="bi bi-image" style="font-size: 4rem; color: white;"></i>
+                    </div>
+                    <p class="text-success"><i class="bi bi-check-circle"></i> 图像生成成功</p>
+                    <small class="text-secondary">提示词: ${prompt}</small>
+                </div>
+            `;
+            btn.innerHTML = '<i class="bi bi-lightning-charge"></i> 重新生成';
+        }
+
+        // Vector Search Demo
+        async function searchProducts() {
+            const btn = document.getElementById('searchBtnContent');
+            const result = document.getElementById('searchResult');
+            const query = document.getElementById('searchQuery').value;
+
+            if (!query) {
+                alert('请输入搜索查询');
+                return;
+            }
+
+            btn.innerHTML = '<span class="loading-spinner"></span> 搜索中...';
+
+            // Simulate API call
+            await new Promise(r => setTimeout(r, 1000));
+
+            const results = [
+                { name: '运动手环 - 计步', score: 0.95, desc: '适合运动爱好者，轻便佩戴' },
+                { name: '智能手表 - 健康监测', score: 0.88, desc: '专业健康监测功能' },
+                { name: '无线耳机 - 降噪', score: 0.75, desc: '运动时听音乐的好伴侣' }
+            ];
+
+            result.innerHTML = `
+                <h6 class="text-secondary mb-3">搜索: "${query}"</h6>
+                ${results.map(r => `
+                    <div class="mb-3 p-3" style="background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>${r.name}</strong>
+                            <span class="badge bg-success">相似度 ${(r.score * 100).toFixed(0)}%</span>
+                        </div>
+                        <small class="text-secondary">${r.desc}</small>
+                    </div>
+                `).join('')}
+            `;
+            btn.innerHTML = '<i class="bi bi-search"></i> 重新搜索';
+        }
+    </script>
+</body>
+</html>
